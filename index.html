@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radhe Collection</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* Custom Configuration for Complex Layouts and Transitions */
+        
+        /* Define the single-column main layout (sidebar removed) */
+        .main-content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column now that sidebar is removed */
+        }
+
+        @media (max-width: 1024px) {
+            /* On smaller screens, stack the layout */
+            .main-content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Custom Filter Accordion Styling */
+        .filter-options {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 5px;
+        }
+
+        .filter-group.open .filter-options {
+            max-height: 500px; /* Arbitrary large value to allow expansion */
+        }
+
+        .filter-heading i {
+            transition: transform 0.3s ease;
+        }
+
+        .filter-group.open .filter-heading i {
+            transform: rotate(180deg);
+        }
+
+        /* Product Grid (2-column mobile, 3-column tablet, 4-column desktop) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Default 2 columns (mobile) */
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columns on sm/md screens */
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 columns on desktop */
+            }
+        }
+
+        /* Product Image Hover Effect */
+        .product-image-wrapper img {
+            transition: transform 0.5s ease;
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+    /* Sidebar removed - mobile overlay styles intentionally omitted */
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- Top Announcement Bar (Orange: Primary Color) -->
+    <div class="bg-orange-600 text-white text-center py-2 text-sm font-semibold">
+        BUY FOR MIN. ₹499. Big sale start
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+            <div class="text-2xl font-extrabold text-orange-600">
+                <a href="#"><img src="New folder/logo.jpg" alt="Logo" style="width:40px;height:40px;object-fit:cover;border-radius:6px;"/></a>
+            </div>
+            
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="font-semibold hover:text-orange-600 transition duration-150">New Arrivals</a>
+                <a href="#" class="font-semibold hover:text-orange-600 transition duration-150">Suits & Sets</a>
+                <a href="#" class="font-semibold hover:text-orange-600 transition duration-150">Kurtas</a>
+                <a href="#" class="font-semibold text-red-600 border-b-2 border-red-600 pb-1">SALE</a>
+            </nav>
+            
+            <!-- Header Icons -->
+            <div class="flex space-x-5 items-center">
+                <i class="fas fa-search text-lg cursor-pointer hover:text-orange-600"></i>
+                <i class="fas fa-user text-lg cursor-pointer hover:text-orange-600 hidden sm:block"></i>
+                <i class="fas fa-shopping-bag text-lg cursor-pointer hover:text-orange-600"></i>
+                <i class="fas fa-bars text-xl cursor-pointer md:hidden menu-toggle"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-1">Radhe Collection</h1>
+        <p class="text-sm text-gray-500 mb-6"><span id="product-count">100+</span> products found</p>
+
+        <!-- Mobile Sort Bar (Filter removed) -->
+        <div class="md:hidden flex justify-center py-3 mb-4 bg-white shadow rounded-lg">
+            <button class="sort-toggle-btn text-gray-700 font-medium hover:text-orange-600">
+                <i class="fas fa-sort mr-2"></i> Sort
+            </button>
+        </div>
+
+        <div class="main-content-wrapper gap-8">
+
+            <!-- Sidebar removed -->
+
+            <!-- Product Grid (Right Column) -->
+            <section class="product-grid-container">
+
+                <div class="flex justify-end items-center mb-6">
+                    <label for="sort-by" class="text-gray-600 mr-3 text-sm hidden sm:block">Sort by:</label>
+                    <select id="sort-by" class="py-2 px-4 border border-gray-300 rounded-lg text-sm focus:ring-orange-500 focus:border-orange-500">
+                        <option value="featured">Featured</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="new">Date, new to old</option>
+                    </select>
+                </div>
+
+                <div class="product-grid" id="product-list">
+                    <!-- Products will be dynamically loaded here by JavaScript -->
+                </div>
+
+                <div class="text-center py-10">
+                    <button class="load-more bg-white border border-orange-600 text-orange-600 font-bold py-3 px-8 rounded-lg shadow-md hover:bg-orange-50 transition duration-200">
+                        Load More Products
+                    </button>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 mt-12 pt-10 pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 border-b border-gray-700 pb-8">
+                <!-- Column 1 -->
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Customer Service</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-orange-400">Contact Us at 9782129238</a></li>
+                        <li><a href="#" class="hover:text-orange-400">Track Order</a></li>
+                        <li><a href="#" class="hover:text-orange-400">Returns & Exchange</a></li>
+                    </ul>
+                </div>
+                <!-- Column 2 -->
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">About</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-orange-400">Our Story</a></li>
+                        <li><a href="#" class="hover:text-orange-400">Careers</a></li>
+                    </ul>
+                </div>
+                <!-- Column 3 (Newsletter) -->
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Join Our Newsletter</h4>
+                    <input type="email" placeholder="Enter your email" class="w-full p-3 mb-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <button class="w-full bg-orange-600 text-white font-bold py-3 rounded-lg hover:bg-orange-700 transition duration-200">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+            <div class="text-center text-xs text-gray-500 mt-6">
+                &copy; 2025 FashionCo. | Educational Clone by AI. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Product Data Definition ---
+        const initialProducts = [
+            // Original 4 products (redefined as data)
+            { id: 1, category: 'Kurta Set', title: 'Purple Embroidered Straight Suit Set', imageColor: 'A0522D', salePrice: 999, regularPrice: 3999, discount: 75, sizes: ['S', 'M', 'L', 'XL'] },
+            { id: 2, category: 'Co-ord Set', title: 'Emerald Green Printed Cotton Co-ord', imageColor: '228B22', salePrice: 1199, regularPrice: 2999, discount: 60, sizes: ['S', 'M', 'L'] },
+            { id: 3, category: 'Dress', title: 'Coral Georgette Flowy Maxi Dress', imageColor: 'FF5733', salePrice: 1499, regularPrice: 2999, discount: 50, sizes: ['XS', 'S', 'M', 'L'] },
+            { id: 4, category: 'Lehenga', title: 'Navy Blue & Silver Embroidered Lehenga', imageColor: '4B0082', salePrice: 1999, regularPrice: 6599, discount: 70, sizes: ['S', 'M', 'L'] },
+        ];  
+
+        // New 70 Suit products at ₹700 each
+        const newSuitProducts = [];
+        const suitColors = ['000000', '1E90FF', '556B2F', '8B4513', '808080', 'B8860B', 'A9A9A9'];
+        const suitTitles = ['Classic', 'Modern Fit', 'Italian Wool', 'Linen Blend', 'Pinstripe', 'Solid Color', 'Slim Fit'];
+        const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const formatPrice = (price) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(price);
+
+
+        for (let i = 0; i < 70; i++) {
+            const salePrice = 499;
+            const regularPrice = 2500 + Math.floor(Math.random() * 1000); // Random original price
+            const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+            // Pick a local image from the "New folder" by cycling through available suit images.
+            // There are many suit images named suit1.jpg ... suit67.jpg in the workspace.
+            const totalLocalSuits = 67; // conservative count based on project files
+            const fileNumber = (i % totalLocalSuits) + 1;
+            const localImagePath = encodeURI(`New folder/suit${fileNumber}.jpg`);
+            // For the first four generated items, use local lehenga images and mark them as Lehenga
+            if (i < 4) {
+                const lehengaImage = encodeURI(`New folder/Lehenga${i + 1}.jpg`);
+                newSuitProducts.push({
+                    id: i + 5,
+                    category: 'Lehenga',
+                    title: `Lehenga ${i + 1} - ${getRandom(['Embroidered', 'Elegant', 'Party Wear', 'Classic'])}`,
+                    imageColor: getRandom(suitColors),
+                    imageSrc: lehengaImage,
+                    salePrice: salePrice,
+                    regularPrice: regularPrice,
+                    discount: discount,
+                    sizes: ['S', 'M', 'L']
+                });
+            } else {
+                newSuitProducts.push({
+                    id: i + 5,
+                    category: 'Suit Set',
+                    // Use uniform suit name as requested
+                    title: 'Rayon and Cotton Suit',
+                    imageColor: getRandom(suitColors),
+                    // Prefer local image if present in the workspace
+                    imageSrc: localImagePath,
+                    salePrice: salePrice,
+                    regularPrice: regularPrice,
+                    discount: discount,
+                    sizes: ['S', 'M', 'L', 'XL']
+                });
+            }
+        }
+
+            // Move the first four generated lehenga items to the top so they appear above the suits
+            const lehengaFront = newSuitProducts.splice(0, 4);
+            // Combine lists, then remove any products with ids 1-4 as requested
+            const combinedProducts = lehengaFront.concat(initialProducts).concat(newSuitProducts);
+            const removedIds = [1, 2, 3, 4];
+            const allProducts = combinedProducts.filter(p => !removedIds.includes(p.id));
+
+            // Post-process: rename suit products to 'Rayon and Cotton Suit' (safety),
+            // convert any product that uses the local 'suit1.jpg' image into the requested Lehenga,
+            // and set salePrice = 999 for all lehengas and for specific suit IDs.
+            const priceTargetIds = [5, 25, 21, 27, 47, 51, 14, 17];
+            // New list: set these specific IDs to ₹799
+            const price799Ids = [24, 29, 31, 6, 4, 15, 45, 53, 57, 56, 54, 14, 11, 49];
+
+            allProducts.forEach(p => {
+                if (p.category === 'Suit Set') {
+                    p.title = 'Rayon and Cotton Suit';
+                }
+
+                // If an item uses suit1.jpg, convert it to a Lehenga with the requested title
+                if (p.imageSrc && p.imageSrc.toLowerCase().includes('suit5.jpg')) {
+                    p.category = 'Lehenga';
+                    p.title = 'Lehenga5 - Elegant';
+                }
+
+                // Apply price rules. price799Ids has priority and will override other rules.
+                if (price799Ids.includes(p.id)) {
+                    p.salePrice = 799;
+                } else if (priceTargetIds.includes(p.id) || p.category === 'Lehenga') {
+                    p.salePrice = 999;
+                }
+
+                // If we changed salePrice, recompute discount safely
+                if (typeof p.salePrice !== 'undefined') {
+                    if (p.regularPrice && Number(p.regularPrice) > 0) {
+                        p.discount = Math.round(((Number(p.regularPrice) - Number(p.salePrice)) / Number(p.regularPrice)) * 100);
+                        if (p.discount < 0) p.discount = 0;
+                    } else {
+                        p.discount = 0;
+                    }
+                }
+            });
+        
+        // --- Core Functions ---
+
+        /**
+         * Generates the HTML string for a single product card.
+         * @param {Object} product - The product data object.
+         * @returns {string} The HTML string.
+         */
+        function createProductCardHtml(product) {
+            const sizeOptionsHtml = product.sizes.map(size => `
+                <span class="size-option border border-gray-300 px-2 py-1 text-xs rounded hover:bg-gray-100 transition">${size}</span>
+            `).join('');
+
+            return `
+                <div class="product-card bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition hover:shadow-2xl" data-id="${product.id}">
+                    <div class="product-image-wrapper relative">
+                    <!-- Use local image when available, otherwise fallback to placeholder -->
+                    <img src="${product.imageSrc ? product.imageSrc : `https://placehold.co/300x400/${product.imageColor}/ffffff?text=Suit+${product.id}`}" 
+                        alt="${product.title}" 
+                        class="aspect-auto">
+                        <span class="discount-tag absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">${product.discount}% OFF</span>
+                    </div>
+                    <div class="product-info p-4">
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">${product.category}</p>
+                        <h4 class="product-title text-base font-semibold text-gray-800 my-1">${product.title}</h4>
+                        <div class="flex items-center space-x-2 my-2">
+                            <span class="sale-price text-xl font-extrabold text-red-600">${formatPrice(product.salePrice)}</span>
+                            <span class="regular-price text-sm text-gray-400 line-through">${formatPrice(product.regularPrice)}</span>
+                        </div>
+                        <div class="size-selection flex gap-2 pt-2">
+                            ${sizeOptionsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        /**
+         * Attaches size selection and card click event listeners to new product cards.
+         * @param {HTMLElement} container - The container element to search for new cards.
+         */
+        function attachEventListeners(container) {
+            const newCards = container.querySelectorAll('.product-card:not([data-listeners-attached])');
+
+            newCards.forEach(card => {
+                const sizeOptions = card.querySelectorAll('.size-option');
+                
+                sizeOptions.forEach(size => {
+                    size.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent card click if size is clicked
+
+                        // Remove 'selected' styling from all siblings
+                        sizeOptions.forEach(s => s.classList.remove('bg-orange-600', 'text-white', 'border-orange-600'));
+                        
+                        // Add 'selected' styling to the clicked size
+                        e.target.classList.add('bg-orange-600', 'text-white', 'border-orange-600');
+                        
+                        console.log(`Selected size ${e.target.textContent} for Product ID: ${card.dataset.id}`);
+                    });
+                });
+
+                // Simulate going to a product page on card click
+                card.addEventListener('click', () => {
+                    const title = card.querySelector('.product-title').textContent;
+                    console.log(`Navigating to product page for: ${title} (ID: ${card.dataset.id})`);
+                });
+
+                card.setAttribute('data-listeners-attached', 'true');
+            });
+        }
+
+        /**
+         * Renders the product list dynamically.
+         * @param {Array<Object>} products - The array of product objects to render.
+         */
+        function renderProducts(products) {
+            const productList = document.getElementById('product-list');
+            if (productList) {
+                const productHtml = products.map(createProductCardHtml).join('');
+                productList.innerHTML = productHtml;
+                attachEventListeners(productList);
+            }
+        }
+
+        // --- DOMContentLoaded and Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial render of all products
+            renderProducts(allProducts);
+
+            // 1. Filter Accordion Functionality
+            const filterHeadings = document.querySelectorAll('.filter-heading');
+            const priceRange = document.getElementById('price-range');
+            const priceDisplay = document.getElementById('price-display');
+
+            // Initialize price display and filter accordion only if elements exist
+            if (priceRange && priceDisplay) {
+                priceDisplay.textContent = `₹0 - ₹${priceRange.value}`;
+
+                priceRange.addEventListener('input', () => {
+                    priceDisplay.textContent = `₹0 - ₹${priceRange.value}`;
+                });
+            }
+
+            if (filterHeadings.length > 0) {
+                filterHeadings.forEach(heading => {
+                    const filterGroup = heading.parentElement;
+                    const filterOptions = filterGroup.querySelector('.filter-options');
+
+                    // Close by default
+                    if (filterOptions) filterOptions.style.maxHeight = '0';
+
+                    heading.addEventListener('click', () => {
+                        filterGroup.classList.toggle('open'); 
+
+                        if (filterGroup.classList.contains('open') && filterOptions) {
+                            filterOptions.style.maxHeight = filterOptions.scrollHeight + "px";
+                        } else if (filterOptions) {
+                            filterOptions.style.maxHeight = '0';
+                        }
+                    });
+                });
+            }
+
+
+            // Sidebar removed: no mobile toggle needed
+
+            // 3. Sort Functionality Simulation
+            const sortBySelect = document.getElementById('sort-by');
+            sortBySelect.addEventListener('change', (e) => {
+                console.log(`Sorting products by: ${e.target.options[e.target.selectedIndex].text} (${e.target.value})`);
+                // Placeholder: In a real app, this would trigger re-rendering the products
+            });
+        });
+    </script>
+</body>
